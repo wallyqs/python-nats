@@ -2,6 +2,10 @@
 
 A Python async client for the [NATS messaging system](https://nats.io).
 
+[![License MIT](https://img.shields.io/npm/l/express.svg)](http://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/wallyqs/python-nats.svg?branch=travis)](http://travis-ci.org/wallyqs/python-nats)
+[![GitHub release](http://img.shields.io/github/release/wallyqs/python-nats.svg?style=flat-square)](https://github.com/wallyqs/python-nats/releases)
+
 ## Supported platforms
 
 Should be compatible with following versions of [Python](https://www.python.org/)
