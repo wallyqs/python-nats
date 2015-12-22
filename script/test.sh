@@ -16,12 +16,9 @@ else
 fi
 
 pip install --upgrade pip
-
-python --version | grep 2.6 && {
-    pip install unittest2    
-}
+pip install unittest2
 pip install -r requirements.txt
 
-export PYTHONPATH=$HOME/gnatsd:$PATH
+export PYTHONPATH=$(pwd)
 python tests/client_test.py
 python tests/protocol_test.py
