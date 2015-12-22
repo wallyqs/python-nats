@@ -11,7 +11,6 @@ if [ ! "$(ls -A $HOME/gnatsd)" ]; then
 else
   echo 'Using cached directory.';
 fi
-
 pip install -r requirements.txt
 python tests/client_test.py
 python tests/protocol_test.py

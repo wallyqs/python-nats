@@ -11,8 +11,6 @@ python:
 env:
   - DEBUG_NATS_TEST=true
 
-before_install:
-  - bash install_gnatsd.sh
 before_script:
   - export PATH=$HOME/gnatsd:$PATH
   
