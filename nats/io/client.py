@@ -312,12 +312,24 @@ class Client(object):
       yield self._flush_pending()
 
   @tornado.gen.coroutine
-  def _publish(self, subject, reply, payload, payload_size):
+  def _publish(self, subject, reply, payload):
+    payload_size = len(payload)
+    if payload_size > self._max_payload_size:
+      raise ErrMaxPayload
+    if self.is_closed:
+      raise ErrConnectionClosed
+    
     payload_size_bytes = ("%d" % payload_size).encode()
     pub_cmd = b''.join([PUB_OP, _SPC_, subject.encode(), _SPC_, reply, _SPC_, payload_size_bytes, _CRLF_, payload, _CRLF_])
     self.stats['out_msgs']  += 1
     self.stats['out_bytes'] += payload_size
-    yield self.send_command(pub_cmd)
+
+    # Do send command logic and flush in the same coroutine.
+    self._pending.append(pub_cmd)
+    self._pending_size += len(pub_cmd)
+    if self.is_connected:
+      if self._flush_queue.empty() or self._pending_size > DEFAULT_PENDING_SIZE:
+        yield self._flush_queue.put(None)
 
   @tornado.gen.coroutine
   def _flush_pending(self):
@@ -335,7 +347,7 @@ class Client(object):
       <<- MSG hello 2 5
 
     """
-    yield self.publish_request(subject, _EMPTY_, payload)
+    yield self._publish(subject, _EMPTY_, payload)
 
   @tornado.gen.coroutine
   def publish_request(self, subject, reply, payload):
@@ -348,14 +360,7 @@ class Client(object):
       <<- MSG hello 2 _INBOX.2007314fe0fcb2cdc2a2914c1 5
 
     """
-    payload_size = len(payload)
-    if payload_size > self._max_payload_size:
-      raise ErrMaxPayload
-    if self.is_closed:
-      raise ErrConnectionClosed
-    yield self._publish(subject, reply, payload, payload_size)
-    if self._flush_queue.empty():
-      yield self._flush_pending()
+    yield self._publish(subject, reply, payload)
 
   @tornado.gen.coroutine
   def flush(self, timeout=60):

@@ -72,7 +72,7 @@ def main():
                 break
 
         # Minimal pause in between batches sent to server
-        yield tornado.gen.sleep(0.00001)
+        yield tornado.gen.moment
 
     # Ensure that all commands have been processed by server already.
     yield nc.flush()
