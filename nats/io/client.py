@@ -1017,6 +1017,7 @@ class Subscription():
 
 
 class Msg(object):
+    __slots__ = 'subject', 'reply', 'data', 'sid'
 
     def __init__(self,
                  subject='',
